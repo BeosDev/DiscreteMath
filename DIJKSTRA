@@ -1,0 +1,68 @@
+import java.util.Scanner;
+
+/**
+ * Created by linh on 24/09/2017.
+ * Tim duong di ngan nhat tu x->y
+ * xay dung mang d[] la chi so ban dau co d[x] = 0
+ * tim ra cac duong tu x->i lay min, tu co so tren xay dung d nhieu lan
+ */
+public class DIJKSTRA {
+    int n, m, x, y;
+    int trace[];
+    int c[][];
+    int d[];
+    boolean free[];
+    private static final int MAX = 288;
+
+    void input() {
+        Scanner scanner = new Scanner(System.in);
+        n = scanner.nextInt();
+        m = scanner.nextInt();
+        x = scanner.nextInt();
+        y = scanner.nextInt();
+        c = new int[n + 1][n + 1];
+        trace = new int[n + 1];
+        free = new boolean[n+1];
+        d = new int[n + 1]; // do dai tu x -> i
+        for (int i = 1; i <= n; i++)
+            for (int j = 1; j <= n; j++)
+                c[i][j] = MAX;
+        for (int i = 0; i < m; i++) {
+            int xTemp = scanner.nextInt();
+            int yTemp = scanner.nextInt();
+            c[yTemp][xTemp] = c[xTemp][yTemp] = scanner.nextInt();
+        }
+    }
+    void findShortestPath(int x,int y){
+        for (int i = 1;i<=n;i++)
+            d[i] = MAX;
+        d[x] = 0;
+        d[0] = MAX;
+        while (true){
+            int min = 0;
+            boolean ok = true;
+            for (int i = 1;i<=n;i++)
+                if (!free[i] && d[min] > d[i]){
+                    min = i;
+                    ok = false;
+                }
+            if (ok || min == y) break;
+            free[min] = true;
+            for (int i = 1;i<=n;i++)
+                if (!free[i] && d[i] > c[min][i] + d[min]){
+                    d[i] = d[min] + c[min][i];
+                    trace[i] = min;
+                }
+        }
+        for (int i = 1;i<=n;i++)
+            System.out.print(trace[i]+" ");
+    }
+    void findShortestPath(){
+        findShortestPath(x,y);
+    }
+    public static void main(String[] args) {
+        DIJKSTRA dijkstra = new DIJKSTRA();
+        dijkstra.input();
+        dijkstra.findShortestPath();
+    }
+}
