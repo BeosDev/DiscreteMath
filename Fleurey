@@ -1,0 +1,108 @@
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+
+/**
+ * Created by linh on 17/09/2017.
+ * Kiem tra tu canh x co di duoc toi y khong va neu xoa canh x va y
+ * do thi co tang so thanh phan lien thong (cau) hay khong
+ */
+public class Fleurey {
+    int numberOfVertex;
+    int numberOfEdge;
+    int edge[][];
+    boolean isAlone[];
+
+    boolean visited[];
+
+    void input() {
+        Scanner scanner = new Scanner(System.in);
+        numberOfVertex = scanner.nextInt();
+        numberOfEdge = scanner.nextInt();
+        edge = new int[numberOfVertex + 1][numberOfVertex + 1];
+        isAlone = new boolean[numberOfVertex+1];
+        for (int i = 1; i <= numberOfEdge; i++) {
+            int x = scanner.nextInt();
+            int y = scanner.nextInt();
+            edge[x][y] = edge[y][x] = scanner.nextInt();
+        }
+    }
+
+    boolean checkIsAlone(int v){
+        boolean check = true;
+        for (int i = 1;i<=numberOfVertex;i++)
+            if (edge[v][i] != 0){
+                check = false;
+                break;
+            }
+        return check;
+    }
+    void findPath(int startVertex) {
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(startVertex);
+        int tempVertex = startVertex;
+        while (!queue.isEmpty()) {
+            boolean isPrint = true;
+            for (int i = 1; i <= numberOfVertex; i++) {
+         //       System.out.println(edge[tempVertex][i] != 0 && !isBridge(tempVertex, i));
+                if (edge[tempVertex][i] != 0 && !isBridge(tempVertex, i)) {
+                    edge[tempVertex][i]--;
+                    edge[i][tempVertex]--;
+        //            System.out.println(tempVertex+" "+isAlone[tempVertex]);
+                    tempVertex = i;
+                    isPrint = false;
+                    queue.add(i);
+                    break;
+                }
+            }
+            if (isPrint){
+                System.out.print(queue.remove()+" ");
+            }
+        }
+    }
+    int countLT(){
+        int count = 0;
+        visited = new boolean[numberOfVertex+1];
+        for (int i = 1; i <= numberOfVertex; i++)
+            if (!visited[i]) {
+                dfs(i);
+                count++;
+            }
+            return count;
+    }
+    private boolean isBridge(int x, int y) {
+        visited = new boolean[numberOfVertex + 1];
+        int count = 1;
+        edge[x][y]--;
+        edge[y][x]--;
+        isAlone[x] = checkIsAlone(x);
+        dfs(y);
+        for (int i = 1; i <= numberOfVertex; i++)
+            if (!isAlone[i] && !visited[i]) {
+                dfs(i);
+                count++;
+            }
+ //       System.out.println(count);
+        edge[x][y]++;
+        edge[y][x]++;
+        return count > 1;
+    }
+
+    void dfs(int v) {
+        visited[v] = true;
+        for (int i = 1; i <= numberOfVertex; i++)
+            if (!isAlone[i] && edge[v][i] != 0 && !visited[i]) {
+                dfs(i);
+            }
+    }
+
+    public static void main(String[] args) {
+        Fleurey fleurey = new Fleurey();
+        fleurey.input();
+      /*  fleurey.edge[1][2]--;
+        fleurey.edge[2][1]--;
+        System.out.println(fleurey.countLT());*/
+        fleurey.findPath(1);
+    }
+
+}
