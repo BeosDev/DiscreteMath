@@ -3,6 +3,7 @@ public class DFS{
     static boolean visited[];
     static int n; // so dinh
     static void dfs(int u){
+        // test
         System.out.print(u+" ");
         visited[u]  = true;
         for (int i = 1;i<=n;i++)
